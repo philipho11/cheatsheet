@@ -1,0 +1,17 @@
+#in director
+source stackrc
+for i in $(nova list |cut -d "=" -f2| grep "^[0-9]" | cut -d" " -f1); do scp openstack-cinder-33.tar.gz heat-admin@$i:.; done
+
+for i in $(nova list |cut -d "=" -f2| grep "^[0-9]" | cut -d" " -f1); do echo "=== $i ==="; ssh heat-admin@$i hostname; done
+
+for i in $(nova list |cut -d "=" -f2| grep "^[0-9]" | cut -d" " -f1); do echo "=== $i ==="; ssh heat-admin@$i 'hostname; tar -xf openstack-cinder-33.tar.gz'; done
+
+for i in $(nova list |cut -d "=" -f2| grep "^[0-9]" | cut -d" " -f1); do echo "=== $i ==="; ssh heat-admin@$i 'hostname; sudo yum -y localinstall python-cinder-9.1.4-33.el7ost.noarch.rpm openstack-cinder-9.1.4-33.el7ost.noarch.rpm'; done
+
+# look for compute only
+for i in $(nova list |grep compute |cut -d "=" -f2| grep "^[0-9]" | cut -d" " -f1); do echo "=== $i ==="; ssh heat-admin@$i 'hostname; sudo multipath -ll | grep failed'; done
+
+
+# in compute, to find processes using a particular dm
+ps -elf |grep "dm-26" | awk '{print $4}'  | xargs -n1 echo
+

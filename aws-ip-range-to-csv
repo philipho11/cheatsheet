@@ -1,0 +1,3 @@
+echo "range,region,service" > aws-ip-range.csv
+cat aws-ip-ranges.json | jq -r '.prefixes[] | select (.region | startswith("ap-")) | to_entries|map(.value)|@csv' >> aws-ip-range.csv
+
